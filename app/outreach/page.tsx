@@ -26,7 +26,7 @@ export default async function OutreachDashboard() {
       .from("contacts")
       .select("*")
       .order("created_at", { ascending: false });
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     contacts = data ?? [];
   } catch (err) {
     loadError = err instanceof Error ? err.message : String(err);

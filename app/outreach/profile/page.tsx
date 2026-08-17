@@ -14,7 +14,7 @@ export default async function ProfilePage() {
       .select("*")
       .eq("id", 1)
       .single();
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     profile = data;
   } catch (err) {
     loadError = err instanceof Error ? err.message : String(err);
