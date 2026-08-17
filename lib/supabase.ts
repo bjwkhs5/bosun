@@ -15,7 +15,13 @@ export function getSupabaseAdmin() {
 }
 
 export type ContactCategory = "brand_marketing" | "literary_agent";
-export type ContactStatus = "new" | "drafted" | "approved" | "sent" | "rejected";
+export type ContactStatus =
+  | "new"
+  | "drafted"
+  | "approved"
+  | "sent"
+  | "replied"
+  | "rejected";
 export type EmailStatus = "draft" | "approved" | "sent" | "failed";
 
 export interface Profile {
@@ -38,6 +44,8 @@ export interface Contact {
   source_url: string | null;
   notes: string;
   status: ContactStatus;
+  reply_notes: string;
+  replied_at: string | null;
   created_at: string;
 }
 
