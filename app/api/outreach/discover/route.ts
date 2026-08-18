@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin, type ContactCategory } from "@/lib/supabase";
-import { runWebSearch, extractJson } from "@/lib/gemini";
+import { runCompletion, extractJson } from "@/lib/gemini";
+import { tavilySearch } from "@/lib/tavily";
 
 interface Candidate {
   name: string;
@@ -10,6 +11,12 @@ interface Candidate {
   source_url: string | null;
   notes: string;
 }
+
+const CATEGORY_SEARCH_HINTS: Record<ContactCategory, string> = {
+  brand_marketing: "brand partnerships press marketing contact email",
+  literary_agent: "literary agent submission guidelines query manuscript",
+  grants_partnerships: "grant program application guidelines partnerships contact",
+};
 
 const CATEGORY_GUIDANCE: Record<ContactCategory, string> = {
   brand_marketing:
@@ -51,17 +58,33 @@ export async function POST(req: NextRequest) {
 
   let candidates: Candidate[];
   try {
+    const searchResults = await tavilySearch(`${query} ${CATEGORY_SEARCH_HINTS[category]}`);
+    if (searchResults.length === 0) {
+      throw new Error("No web search results found for this query");
+    }
+
+    const searchContext = searchResults
+      .map(
+        (r, i) =>
+          `[${i + 1}] ${r.title}\nURL: ${r.url}\n${r.content.slice(0, 1500)}`
+      )
+      .join("\n\n");
+
     const systemInstruction =
       CATEGORY_GUIDANCE[category] +
-      " Respond with ONLY a JSON array (no prose, no markdown fences), " +
-      "each item: {\"name\": string, \"title\": string, " +
-      '"organization": string, "email": string|null, ' +
-      '"source_url": string, "notes": string}. Use null for email if you ' +
-      "could not find a specific one published anywhere — do not guess " +
-      "or invent an email address. Return at most 8 items. Every item " +
-      "must include the source_url you found it on.";
+      " You are extracting from the web search results provided below — " +
+      "only use information actually present in them, do not use outside " +
+      "knowledge or invent anything not stated in the results. Respond with " +
+      'ONLY a JSON array (no prose, no markdown fences), each item: {"name": ' +
+      'string, "title": string, "organization": string, "email": ' +
+      'string|null, "source_url": string, "notes": string}. Use null for ' +
+      "email if the results don't show a specific one — do not guess or " +
+      "invent an email address. Return at most 8 items. Every item's " +
+      "source_url must be a URL that actually appears in the results below.";
 
-    const text = await runWebSearch(systemInstruction, query);
+    const userContent = `Target: ${query}\n\nSearch results:\n\n${searchContext}`;
+
+    const text = await runCompletion(systemInstruction, userContent);
     candidates = extractJson<Candidate[]>(text);
     if (!Array.isArray(candidates)) throw new Error("Model did not return an array");
   } catch (err) {

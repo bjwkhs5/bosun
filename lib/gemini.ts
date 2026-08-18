@@ -12,24 +12,9 @@ export function getGemini() {
   return client;
 }
 
-export const DISCOVERY_MODEL = "gemini-3.6-flash";
 export const DRAFT_MODEL = "gemini-3.6-flash";
 
-/** Runs a prompt with Gemini's Google Search grounding tool enabled. */
-export async function runWebSearch(systemInstruction: string, userContent: string) {
-  const ai = getGemini();
-  const response = await ai.models.generateContent({
-    model: DISCOVERY_MODEL,
-    contents: userContent,
-    config: {
-      systemInstruction,
-      tools: [{ googleSearch: {} }],
-    },
-  });
-  return response.text ?? "";
-}
-
-/** Runs a plain (non-search) prompt, e.g. for drafting. */
+/** Runs a plain (non-search) prompt, e.g. for drafting or extraction. */
 export async function runCompletion(systemInstruction: string, userContent: string) {
   const ai = getGemini();
   const response = await ai.models.generateContent({

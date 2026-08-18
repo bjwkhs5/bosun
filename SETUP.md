@@ -1,6 +1,6 @@
 # Bosun Setup
 
-Three external services need credentials before the `/outreach` feature
+Four external services need credentials before the `/outreach` feature
 works end to end. Nothing will run without these — the app will show a
 clear error pointing at whichever one is missing.
 
@@ -16,23 +16,36 @@ clear error pointing at whichever one is missing.
    SUPABASE_SERVICE_ROLE_KEY=<paste here>
    ```
 
-## 2. Google Gemini (contact research + email drafting)
+## 2. Google Gemini (email drafting + extracting contacts from search results)
 
-1. aistudio.google.com/apikey → Create API key. This has a real free tier
-   (no credit card required) — see quota limits on that page.
+1. aistudio.google.com/apikey → Create API key.
 2. `.env.local`:
    ```
    GEMINI_API_KEY=<paste here>
    ```
 
-Note: contact discovery uses Gemini's Google Search grounding tool to
-find *publicly listed* contacts — agency submission pages, brand
+Note: Gemini's own Google Search grounding tool (an earlier version of
+this used it directly for discovery) requires prepaid billing credits —
+it's not actually free. Plain Gemini calls (drafting, and extracting
+structured contacts from search results below) stay on the free tier.
+
+## 3. Tavily (web search for contact discovery)
+
+1. tavily.com → sign up → API key is on your dashboard. Free tier (1,000
+   searches/month), no credit card required.
+2. `.env.local`:
+   ```
+   TAVILY_API_KEY=<paste here>
+   ```
+
+Discovery runs a Tavily search, then has Gemini extract structured
+contacts from the results — agency submission pages, brand
 partnerships/press inboxes, named literary agents. It generally won't
 find a specific individual marketing manager's private email if that
 isn't published anywhere; expect a mix of named contacts and generic
 team inboxes, and always sanity-check a contact before sending.
 
-## 3. Outlook SMTP (send mail as you)
+## 4. Outlook SMTP (send mail as you)
 
 This is what lets the app send an email through your real Outlook account
 — and only after you click "Approve & Send" on a specific draft. Nothing
