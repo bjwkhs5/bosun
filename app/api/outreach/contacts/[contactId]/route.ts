@@ -49,3 +49,31 @@ export async function PATCH(
 
   return NextResponse.json({ contact: data });
 }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ contactId: string }> }
+) {
+  const { contactId } = await params;
+
+  let supabase;
+  try {
+    supabase = getSupabaseAdmin();
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
+  }
+
+  const { error } = await supabase.from("contacts").delete().eq("id", contactId);
+
+  if (error) {
+    return NextResponse.json(
+      { error: `Failed to delete contact: ${error.message}` },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({ ok: true });
+}

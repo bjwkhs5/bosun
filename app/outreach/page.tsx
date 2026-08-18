@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getSupabaseAdmin, type Contact } from "@/lib/supabase";
+import DraftButton from "./DraftButton";
 
 export const dynamic = "force-dynamic";
 
@@ -95,14 +96,17 @@ export default async function OutreachDashboard() {
               const needsFollowUp = days !== null && days >= FOLLOW_UP_DAYS;
               return (
                 <li key={c.id} className="flex items-center justify-between py-3">
-                  <Link href={`/outreach/${c.id}`} className="hover:underline">
-                    <span className="font-medium">{c.name || c.organization}</span>
-                    <span className="text-sm text-foreground/70">
-                      {" "}
-                      — {c.title ? `${c.title}, ` : ""}
-                      {c.organization}
-                    </span>
-                  </Link>
+                  <span className="flex items-center gap-2">
+                    <Link href={`/outreach/${c.id}`} className="hover:underline">
+                      <span className="font-medium">{c.name || c.organization}</span>
+                      <span className="text-sm text-foreground/70">
+                        {" "}
+                        — {c.title ? `${c.title}, ` : ""}
+                        {c.organization}
+                      </span>
+                    </Link>
+                    <DraftButton contactId={c.id} />
+                  </span>
                   <span className="flex items-center gap-2">
                     {needsFollowUp && (
                       <span className="rounded-full border border-orange-500/30 bg-orange-500/10 px-2.5 py-0.5 text-xs text-orange-700 dark:text-orange-300">
