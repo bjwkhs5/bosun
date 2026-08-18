@@ -23,6 +23,15 @@ const CATEGORY_INSTRUCTIONS = {
     "are noted. Keep it under 300 words and avoid clichés like " +
     '"I am seeking representation for my novel, working title..." as an ' +
     "opening line — start with the story hook instead.",
+  grants_partnerships:
+    "Write a short, professional partnership/grant-inquiry email to this " +
+    "organization. Open by naming the specific program or opportunity (from " +
+    "the notes) and why he's a fit, state the ask clearly (funding, " +
+    "sponsorship, or partnership), back it with 1-2 credibility points from " +
+    "his bio, mention any deadline noted if relevant, include his links, and " +
+    "close with a clear next step (e.g. willingness to submit a full " +
+    "application or send more materials). Keep it under 200 words, " +
+    "professional and specific — no generic flattery.",
 } as const;
 
 export async function POST(req: NextRequest) {

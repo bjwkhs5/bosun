@@ -22,7 +22,7 @@ create table if not exists contacts (
   name text not null default '',
   title text not null default '',
   organization text not null default '',
-  category text not null check (category in ('brand_marketing', 'literary_agent')),
+  category text not null check (category in ('brand_marketing', 'literary_agent', 'grants_partnerships')),
   email text,
   source_url text,
   notes text not null default '',
@@ -39,6 +39,9 @@ alter table contacts add column if not exists replied_at timestamptz;
 alter table contacts drop constraint if exists contacts_status_check;
 alter table contacts add constraint contacts_status_check
   check (status in ('new', 'drafted', 'approved', 'sent', 'replied', 'rejected'));
+alter table contacts drop constraint if exists contacts_category_check;
+alter table contacts add constraint contacts_category_check
+  check (category in ('brand_marketing', 'literary_agent', 'grants_partnerships'));
 
 create table if not exists outreach_emails (
   id uuid primary key default gen_random_uuid(),

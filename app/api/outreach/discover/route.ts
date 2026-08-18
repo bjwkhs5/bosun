@@ -22,6 +22,13 @@ const CATEGORY_GUIDANCE: Record<ContactCategory, string> = {
     "Find real literary agents who represent the genre/type of book described " +
     "below and are currently open to queries, using their agency's own " +
     "submission guidelines page for the query email and any stated preferences.",
+  grants_partnerships:
+    "Find real grant programs, government agencies/arts councils, foundations, " +
+    "or companies with a corporate partnerships/sponsorship program relevant " +
+    "to the target described below. For each, use the organization's own " +
+    "published page (grant guidelines, partnerships page, or contact page) " +
+    "for the contact email/inbox and note any application deadline, eligibility " +
+    "requirements, or submission process mentioned there.",
 };
 
 export async function POST(req: NextRequest) {
@@ -35,7 +42,7 @@ export async function POST(req: NextRequest) {
   const category = body.category as ContactCategory;
   const query = (body.query ?? "").trim();
 
-  if (category !== "brand_marketing" && category !== "literary_agent") {
+  if (!(category in CATEGORY_GUIDANCE)) {
     return NextResponse.json({ error: "Invalid category" }, { status: 400 });
   }
   if (!query) {

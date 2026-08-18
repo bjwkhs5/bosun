@@ -15,6 +15,7 @@ const STATUS_STYLES: Record<Contact["status"], string> = {
 const CATEGORY_LABELS: Record<Contact["category"], string> = {
   brand_marketing: "Brand marketing / partnerships",
   literary_agent: "Literary agents",
+  grants_partnerships: "Grants & partnerships",
 };
 
 const FOLLOW_UP_DAYS = 7;

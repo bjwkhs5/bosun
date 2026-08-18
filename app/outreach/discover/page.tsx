@@ -15,9 +15,9 @@ interface FoundContact {
 
 export default function DiscoverPage() {
   const router = useRouter();
-  const [category, setCategory] = useState<"brand_marketing" | "literary_agent">(
-    "brand_marketing"
-  );
+  const [category, setCategory] = useState<
+    "brand_marketing" | "literary_agent" | "grants_partnerships"
+  >("brand_marketing");
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -117,6 +117,14 @@ export default function DiscoverPage() {
             />
             Literary agent
           </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
+              checked={category === "grants_partnerships"}
+              onChange={() => setCategory("grants_partnerships")}
+            />
+            Grants &amp; partnerships
+          </label>
         </div>
         <textarea
           value={query}
@@ -125,7 +133,9 @@ export default function DiscoverPage() {
           placeholder={
             category === "brand_marketing"
               ? "e.g. golf apparel brands that run creator/ambassador partnerships with new golfers"
-              : "e.g. agents who represent memoirs about race, career, and identity"
+              : category === "literary_agent"
+              ? "e.g. agents who represent memoirs about race, career, and identity"
+              : "e.g. arts council grants for debut authors, or companies that sponsor golf memoirs"
           }
           className="rounded-md border border-black/15 bg-transparent p-2.5 text-sm outline-none focus:border-foreground/50 dark:border-white/15"
         />
