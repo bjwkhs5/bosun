@@ -16,10 +16,17 @@ export default function ContactClient({
   const [email, setEmail] = useState(latestEmail);
   const [subject, setSubject] = useState(latestEmail?.subject ?? "");
   const [emailBody, setEmailBody] = useState(latestEmail?.body ?? "");
-  const [busy, setBusy] = useState<"draft" | "save" | "send" | null>(null);
+  const [busy, setBusy] = useState<"draft" | "save" | "send" | "reply" | null>(
+    null
+  );
   const [error, setError] = useState<string | null>(null);
 
+  const [contactStatus, setContactStatus] = useState(contact.status);
+  const [replyNotes, setReplyNotes] = useState(contact.reply_notes);
+  const [repliedAt, setRepliedAt] = useState(contact.replied_at);
+
   const isSent = email?.status === "sent";
+  const isReplied = contactStatus === "replied";
 
   async function generateDraft() {
     setBusy("draft");
@@ -76,6 +83,28 @@ export default function ContactClient({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to send");
       setEmail(data.email);
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function setReplied(replied: boolean) {
+    setBusy("reply");
+    setError(null);
+    try {
+      const res = await fetch(`/api/outreach/contacts/${contact.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ replied, reply_notes: replyNotes }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to update");
+      setContactStatus(data.contact.status);
+      setReplyNotes(data.contact.reply_notes);
+      setRepliedAt(data.contact.replied_at);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -145,9 +174,60 @@ export default function ContactClient({
           </label>
 
           {isSent ? (
-            <p className="rounded-md border border-green-500/30 bg-green-500/10 p-3 text-sm">
-              Sent {email.sent_at ? new Date(email.sent_at).toLocaleString() : ""}.
-            </p>
+            <div className="flex flex-col gap-3">
+              <p className="rounded-md border border-green-500/30 bg-green-500/10 p-3 text-sm">
+                Sent {email.sent_at ? new Date(email.sent_at).toLocaleString() : ""}.
+              </p>
+
+              {isReplied ? (
+                <div className="flex flex-col gap-2 rounded-md border border-purple-500/30 bg-purple-500/10 p-3 text-sm">
+                  <p>
+                    Replied
+                    {repliedAt ? ` ${new Date(repliedAt).toLocaleString()}` : ""}.
+                  </p>
+                  <textarea
+                    value={replyNotes}
+                    onChange={(e) => setReplyNotes(e.target.value)}
+                    placeholder="Notes about their reply…"
+                    rows={3}
+                    className="rounded-md border border-black/15 bg-transparent p-2 text-sm outline-none focus:border-foreground/50 dark:border-white/15"
+                  />
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setReplied(true)}
+                      disabled={busy !== null}
+                      className="self-start rounded-md border border-black/15 px-3 py-1.5 text-sm hover:bg-black/5 disabled:opacity-50 dark:border-white/15 dark:hover:bg-white/5"
+                    >
+                      {busy === "reply" ? "Saving…" : "Save notes"}
+                    </button>
+                    <button
+                      onClick={() => setReplied(false)}
+                      disabled={busy !== null}
+                      className="self-start rounded-md border border-black/15 px-3 py-1.5 text-sm hover:bg-black/5 disabled:opacity-50 dark:border-white/15 dark:hover:bg-white/5"
+                    >
+                      Unmark reply
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <textarea
+                    value={replyNotes}
+                    onChange={(e) => setReplyNotes(e.target.value)}
+                    placeholder="Notes about their reply (optional)…"
+                    rows={2}
+                    className="rounded-md border border-black/15 bg-transparent p-2 text-sm outline-none focus:border-foreground/50 dark:border-white/15"
+                  />
+                  <button
+                    onClick={() => setReplied(true)}
+                    disabled={busy !== null}
+                    className="self-start rounded-md border border-black/15 px-3 py-1.5 text-sm hover:bg-black/5 disabled:opacity-50 dark:border-white/15 dark:hover:bg-white/5"
+                  >
+                    {busy === "reply" ? "Saving…" : "Mark as replied"}
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <div className="flex gap-3">
               <button

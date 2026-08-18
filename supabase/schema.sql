@@ -26,9 +26,19 @@ create table if not exists contacts (
   email text,
   source_url text,
   notes text not null default '',
-  status text not null default 'new' check (status in ('new', 'drafted', 'approved', 'sent', 'rejected')),
+  status text not null default 'new' check (status in ('new', 'drafted', 'approved', 'sent', 'replied', 'rejected')),
+  reply_notes text not null default '',
+  replied_at timestamptz,
   created_at timestamptz not null default now()
 );
+
+-- Re-running this file on a database that already has the table (e.g. after
+-- this feature was added) applies the new columns/status in place:
+alter table contacts add column if not exists reply_notes text not null default '';
+alter table contacts add column if not exists replied_at timestamptz;
+alter table contacts drop constraint if exists contacts_status_check;
+alter table contacts add constraint contacts_status_check
+  check (status in ('new', 'drafted', 'approved', 'sent', 'replied', 'rejected'));
 
 create table if not exists outreach_emails (
   id uuid primary key default gen_random_uuid(),

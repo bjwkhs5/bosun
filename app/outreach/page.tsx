@@ -8,6 +8,7 @@ const STATUS_STYLES: Record<Contact["status"], string> = {
   drafted: "bg-yellow-500/10 text-yellow-700 dark:text-yellow-300 border-yellow-500/30",
   approved: "bg-yellow-500/10 text-yellow-700 dark:text-yellow-300 border-yellow-500/30",
   sent: "bg-green-500/10 text-green-700 dark:text-green-300 border-green-500/30",
+  replied: "bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/30",
   rejected: "bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/30",
 };
 
