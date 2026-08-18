@@ -14,7 +14,10 @@ export function getSupabaseAdmin() {
   });
 }
 
-export type ContactCategory = "brand_marketing" | "literary_agent";
+export type ContactCategory =
+  | "brand_marketing"
+  | "literary_agent"
+  | "grants_partnerships";
 export type ContactStatus =
   | "new"
   | "drafted"
