@@ -16,9 +16,9 @@ export default function ContactClient({
   const [email, setEmail] = useState(latestEmail);
   const [subject, setSubject] = useState(latestEmail?.subject ?? "");
   const [emailBody, setEmailBody] = useState(latestEmail?.body ?? "");
-  const [busy, setBusy] = useState<"draft" | "save" | "send" | "reply" | null>(
-    null
-  );
+  const [busy, setBusy] = useState<
+    "draft" | "save" | "send" | "reply" | "delete" | null
+  >(null);
   const [error, setError] = useState<string | null>(null);
 
   const [contactStatus, setContactStatus] = useState(contact.status);
@@ -113,15 +113,46 @@ export default function ContactClient({
     }
   }
 
+  async function deleteContact() {
+    if (!window.confirm("Delete this contact and all its drafts? This can't be undone.")) {
+      return;
+    }
+    setBusy("delete");
+    setError(null);
+    try {
+      const res = await fetch(`/api/outreach/contacts/${contact.id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to delete");
+      router.push("/outreach");
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+      setBusy(null);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h2 className="text-lg font-semibold">{contact.name || contact.organization}</h2>
-        <p className="text-sm text-foreground/70">
-          {contact.title ? `${contact.title}, ` : ""}
-          {contact.organization} ·{" "}
-          {contact.email ?? "no email on file"}
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-lg font-semibold">{contact.name || contact.organization}</h2>
+          <p className="text-sm text-foreground/70">
+            {contact.title ? `${contact.title}, ` : ""}
+            {contact.organization} ·{" "}
+            {contact.email ?? "no email on file"}
+          </p>
+        </div>
+        <button
+          onClick={deleteContact}
+          disabled={busy !== null}
+          className="shrink-0 rounded-md border border-red-500/30 px-3 py-1.5 text-sm text-red-600 hover:bg-red-500/10 disabled:opacity-50 dark:text-red-400"
+        >
+          {busy === "delete" ? "Deleting…" : "Delete contact"}
+        </button>
+      </div>
+      <div className="-mt-4">
         {contact.source_url && (
           <a
             href={contact.source_url}
