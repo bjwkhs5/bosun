@@ -1,4 +1,4 @@
-# Outreach Assistant Setup
+# Bosun Setup
 
 Three external services need credentials before the `/outreach` feature
 works end to end. Nothing will run without these — the app will show a

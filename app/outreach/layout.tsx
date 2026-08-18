@@ -14,7 +14,7 @@ export default function OutreachLayout({
   return (
     <div className="mx-auto max-w-4xl px-6 py-8">
       <header className="mb-8 flex items-center justify-between border-b border-black/10 pb-4 dark:border-white/10">
-        <h1 className="text-lg font-semibold">Outreach Assistant</h1>
+        <h1 className="text-lg font-semibold">Bosun</h1>
         <nav className="flex gap-4 text-sm">
           {links.map((link) => (
             <Link

@@ -1,6 +1,9 @@
-# Writer AI
+# Bosun
 
-An AI-assisted writing app built with Next.js, Supabase, NextAuth, and the OpenAI API.
+Your outreach first mate — an AI-assisted app for discovering contacts
+(brand partnerships, literary agents, grants), drafting personalized
+outreach emails, and sending them. Built with Next.js, Supabase,
+nodemailer, and the OpenAI API.
 
 This project was bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
