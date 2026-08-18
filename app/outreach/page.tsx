@@ -17,15 +17,31 @@ const CATEGORY_LABELS: Record<Contact["category"], string> = {
   literary_agent: "Literary agents",
 };
 
+const FOLLOW_UP_DAYS = 7;
+
+type ContactWithEmails = Contact & {
+  outreach_emails: { sent_at: string | null; status: string }[];
+};
+
+function daysSinceSent(contact: ContactWithEmails): number | null {
+  if (contact.status !== "sent") return null;
+  const sentDates = contact.outreach_emails
+    .filter((e) => e.status === "sent" && e.sent_at)
+    .map((e) => new Date(e.sent_at as string).getTime());
+  if (sentDates.length === 0) return null;
+  const mostRecent = Math.max(...sentDates);
+  return Math.floor((Date.now() - mostRecent) / 86_400_000);
+}
+
 export default async function OutreachDashboard() {
-  let contacts: Contact[] = [];
+  let contacts: ContactWithEmails[] = [];
   let loadError: string | null = null;
 
   try {
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase
       .from("contacts")
-      .select("*")
+      .select("*, outreach_emails(sent_at, status)")
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
     contacts = data ?? [];
@@ -60,7 +76,7 @@ export default async function OutreachDashboard() {
     );
   }
 
-  const grouped = contacts.reduce<Record<string, Contact[]>>((acc, c) => {
+  const grouped = contacts.reduce<Record<string, ContactWithEmails[]>>((acc, c) => {
     (acc[c.category] ??= []).push(c);
     return acc;
   }, {});
@@ -73,23 +89,34 @@ export default async function OutreachDashboard() {
             {CATEGORY_LABELS[category as Contact["category"]]} ({items.length})
           </h2>
           <ul className="flex flex-col divide-y divide-black/10 dark:divide-white/10">
-            {items.map((c) => (
-              <li key={c.id} className="flex items-center justify-between py-3">
-                <Link href={`/outreach/${c.id}`} className="hover:underline">
-                  <span className="font-medium">{c.name || c.organization}</span>
-                  <span className="text-sm text-foreground/70">
-                    {" "}
-                    — {c.title ? `${c.title}, ` : ""}
-                    {c.organization}
+            {items.map((c) => {
+              const days = daysSinceSent(c);
+              const needsFollowUp = days !== null && days >= FOLLOW_UP_DAYS;
+              return (
+                <li key={c.id} className="flex items-center justify-between py-3">
+                  <Link href={`/outreach/${c.id}`} className="hover:underline">
+                    <span className="font-medium">{c.name || c.organization}</span>
+                    <span className="text-sm text-foreground/70">
+                      {" "}
+                      — {c.title ? `${c.title}, ` : ""}
+                      {c.organization}
+                    </span>
+                  </Link>
+                  <span className="flex items-center gap-2">
+                    {needsFollowUp && (
+                      <span className="rounded-full border border-orange-500/30 bg-orange-500/10 px-2.5 py-0.5 text-xs text-orange-700 dark:text-orange-300">
+                        Follow up · {days}d, no reply
+                      </span>
+                    )}
+                    <span
+                      className={`rounded-full border px-2.5 py-0.5 text-xs ${STATUS_STYLES[c.status]}`}
+                    >
+                      {c.status}
+                    </span>
                   </span>
-                </Link>
-                <span
-                  className={`rounded-full border px-2.5 py-0.5 text-xs ${STATUS_STYLES[c.status]}`}
-                >
-                  {c.status}
-                </span>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         </section>
       ))}
