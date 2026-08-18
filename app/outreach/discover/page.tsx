@@ -27,6 +27,13 @@ export default function DiscoverPage() {
     candidatesFound: number;
   } | null>(null);
 
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
+  const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number } | null>(
+    null
+  );
+  const [draftStatus, setDraftStatus] = useState<Record<string, "ok" | "error">>({});
+
   async function runDiscovery(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -41,12 +48,46 @@ export default function DiscoverPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Discovery failed");
       setResult(data);
+      setSelected(new Set(data.inserted.map((c: FoundContact) => c.id)));
+      setDraftStatus({});
+      setBulkProgress(null);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
       setLoading(false);
     }
+  }
+
+  function toggleSelected(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  async function generateSelectedDrafts() {
+    if (!result || selected.size === 0) return;
+    setBulkBusy(true);
+    setBulkProgress({ done: 0, total: selected.size });
+    const ids = result.inserted.map((c) => c.id).filter((id) => selected.has(id));
+    for (let i = 0; i < ids.length; i++) {
+      try {
+        const res = await fetch("/api/outreach/draft", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contactId: ids[i] }),
+        });
+        setDraftStatus((prev) => ({ ...prev, [ids[i]]: res.ok ? "ok" : "error" }));
+      } catch {
+        setDraftStatus((prev) => ({ ...prev, [ids[i]]: "error" }));
+      }
+      setBulkProgress({ done: i + 1, total: ids.length });
+    }
+    setBulkBusy(false);
+    router.refresh();
   }
 
   return (
@@ -110,24 +151,46 @@ export default function DiscoverPage() {
             skipped {result.skipped} already-known.
           </p>
           {result.inserted.length > 0 && (
-            <ul className="flex flex-col gap-2">
-              {result.inserted.map((c) => (
-                <li key={c.id}>
-                  <Link
-                    href={`/outreach/${c.id}`}
-                    className="font-medium hover:underline"
-                  >
-                    {c.name || c.organization}
-                  </Link>
-                  <span className="text-foreground/70">
-                    {" "}
-                    — {c.title ? `${c.title}, ` : ""}
-                    {c.organization}
-                    {c.email ? ` · ${c.email}` : " · no email found"}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            <>
+              <ul className="flex flex-col gap-2">
+                {result.inserted.map((c) => (
+                  <li key={c.id} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={selected.has(c.id)}
+                      onChange={() => toggleSelected(c.id)}
+                      disabled={bulkBusy}
+                    />
+                    <Link
+                      href={`/outreach/${c.id}`}
+                      className="font-medium hover:underline"
+                    >
+                      {c.name || c.organization}
+                    </Link>
+                    <span className="text-foreground/70">
+                      — {c.title ? `${c.title}, ` : ""}
+                      {c.organization}
+                      {c.email ? ` · ${c.email}` : " · no email found"}
+                    </span>
+                    {draftStatus[c.id] === "ok" && (
+                      <span className="text-green-600 dark:text-green-400">✓ drafted</span>
+                    )}
+                    {draftStatus[c.id] === "error" && (
+                      <span className="text-red-600 dark:text-red-400">✗ failed</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              <button
+                onClick={generateSelectedDrafts}
+                disabled={bulkBusy || selected.size === 0}
+                className="mt-4 self-start rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background hover:opacity-90 disabled:opacity-50"
+              >
+                {bulkBusy
+                  ? `Drafting ${bulkProgress?.done ?? 0}/${bulkProgress?.total ?? 0}…`
+                  : `Generate drafts for ${selected.size} selected`}
+              </button>
+            </>
           )}
         </div>
       )}
