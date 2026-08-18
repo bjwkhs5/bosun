@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
-import { getOpenAI, DRAFT_MODEL, extractJson } from "@/lib/openai";
+import { runCompletion, extractJson } from "@/lib/gemini";
 
 interface Draft {
   subject: string;
@@ -75,40 +75,30 @@ export async function POST(req: NextRequest) {
 
   let draft: Draft;
   try {
-    const openai = getOpenAI();
-    const response = await openai.responses.create({
-      model: DRAFT_MODEL,
-      input: [
-        {
-          role: "system",
-          content:
-            CATEGORY_INSTRUCTIONS[
-              contact.category as keyof typeof CATEGORY_INSTRUCTIONS
-            ] +
-            ' Respond with ONLY JSON (no markdown fences): {"subject": string, "body": string}. ' +
-            "The body should be plain text with blank lines between " +
-            "paragraphs, ready to paste into an email client — no signature " +
-            "block needed beyond his name.",
-        },
-        {
-          role: "user",
-          content: [
-            `Sender bio: ${profile.bio}`,
-            `Book title: ${profile.book_title}`,
-            `Book details: ${profile.book_details}`,
-            `Links: ${profile.links}`,
-            `What the sender wants: ${profile.ask}`,
-            "---",
-            `Recipient name: ${contact.name || "(unknown, use a generic greeting)"}`,
-            `Recipient title: ${contact.title}`,
-            `Recipient organization: ${contact.organization}`,
-            `Notes about recipient: ${contact.notes}`,
-          ].join("\n"),
-        },
-      ],
-    });
+    const systemInstruction =
+      CATEGORY_INSTRUCTIONS[
+        contact.category as keyof typeof CATEGORY_INSTRUCTIONS
+      ] +
+      ' Respond with ONLY JSON (no markdown fences): {"subject": string, "body": string}. ' +
+      "The body should be plain text with blank lines between " +
+      "paragraphs, ready to paste into an email client — no signature " +
+      "block needed beyond his name.";
 
-    draft = extractJson<Draft>(response.output_text);
+    const userContent = [
+      `Sender bio: ${profile.bio}`,
+      `Book title: ${profile.book_title}`,
+      `Book details: ${profile.book_details}`,
+      `Links: ${profile.links}`,
+      `What the sender wants: ${profile.ask}`,
+      "---",
+      `Recipient name: ${contact.name || "(unknown, use a generic greeting)"}`,
+      `Recipient title: ${contact.title}`,
+      `Recipient organization: ${contact.organization}`,
+      `Notes about recipient: ${contact.notes}`,
+    ].join("\n");
+
+    const text = await runCompletion(systemInstruction, userContent);
+    draft = extractJson<Draft>(text);
     if (!draft.subject || !draft.body) throw new Error("Model returned incomplete draft");
   } catch (err) {
     return NextResponse.json(

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin, type ContactCategory } from "@/lib/supabase";
-import { runWebSearch, extractJson } from "@/lib/openai";
+import { runWebSearch, extractJson } from "@/lib/gemini";
 
 interface Candidate {
   name: string;
@@ -51,23 +51,18 @@ export async function POST(req: NextRequest) {
 
   let candidates: Candidate[];
   try {
-    const response = await runWebSearch([
-      {
-        role: "system",
-        content:
-          CATEGORY_GUIDANCE[category] +
-          " Respond with ONLY a JSON array (no prose, no markdown fences), " +
-          "each item: {\"name\": string, \"title\": string, " +
-          '"organization": string, "email": string|null, ' +
-          '"source_url": string, "notes": string}. Use null for email if you ' +
-          "could not find a specific one published anywhere — do not guess " +
-          "or invent an email address. Return at most 8 items. Every item " +
-          "must include the source_url you found it on.",
-      },
-      { role: "user", content: query },
-    ]);
+    const systemInstruction =
+      CATEGORY_GUIDANCE[category] +
+      " Respond with ONLY a JSON array (no prose, no markdown fences), " +
+      "each item: {\"name\": string, \"title\": string, " +
+      '"organization": string, "email": string|null, ' +
+      '"source_url": string, "notes": string}. Use null for email if you ' +
+      "could not find a specific one published anywhere — do not guess " +
+      "or invent an email address. Return at most 8 items. Every item " +
+      "must include the source_url you found it on.";
 
-    candidates = extractJson<Candidate[]>(response.output_text);
+    const text = await runWebSearch(systemInstruction, query);
+    candidates = extractJson<Candidate[]>(text);
     if (!Array.isArray(candidates)) throw new Error("Model did not return an array");
   } catch (err) {
     return NextResponse.json(

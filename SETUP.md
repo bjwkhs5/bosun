@@ -16,20 +16,21 @@ clear error pointing at whichever one is missing.
    SUPABASE_SERVICE_ROLE_KEY=<paste here>
    ```
 
-## 2. OpenAI (contact research + email drafting)
+## 2. Google Gemini (contact research + email drafting)
 
-1. platform.openai.com → API keys → create a key.
+1. aistudio.google.com/apikey → Create API key. This has a real free tier
+   (no credit card required) — see quota limits on that page.
 2. `.env.local`:
    ```
-   OPENAI_API_KEY=<paste here>
+   GEMINI_API_KEY=<paste here>
    ```
 
-Note: contact discovery uses OpenAI's web search tool to find *publicly
-listed* contacts — agency submission pages, brand partnerships/press
-inboxes, named literary agents. It generally won't find a specific
-individual marketing manager's private email if that isn't published
-anywhere; expect a mix of named contacts and generic team inboxes, and
-always sanity-check a contact before sending.
+Note: contact discovery uses Gemini's Google Search grounding tool to
+find *publicly listed* contacts — agency submission pages, brand
+partnerships/press inboxes, named literary agents. It generally won't
+find a specific individual marketing manager's private email if that
+isn't published anywhere; expect a mix of named contacts and generic
+team inboxes, and always sanity-check a contact before sending.
 
 ## 3. Outlook SMTP (send mail as you)
 
