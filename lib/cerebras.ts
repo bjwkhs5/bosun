@@ -12,7 +12,7 @@ export function getCerebras() {
   return client;
 }
 
-export const COMPLETION_MODEL = "llama-3.3-70b";
+export const COMPLETION_MODEL = "gpt-oss-120b";
 
 /** Runs a chat completion, e.g. for drafting or extracting structured data. */
 export async function runCompletion(systemInstruction: string, userContent: string) {
