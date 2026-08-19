@@ -5,6 +5,7 @@ const links = [
   { href: "/outreach/profile", label: "Profile" },
   { href: "/outreach/discover", label: "Discover" },
   { href: "/outreach/new", label: "Add contact" },
+  { href: "/outreach/review", label: "Review & Send" },
 ];
 
 export default function OutreachLayout({
