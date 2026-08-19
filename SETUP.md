@@ -45,22 +45,28 @@ find a specific individual marketing manager's private email if that
 isn't published anywhere; expect a mix of named contacts and generic
 team inboxes, and always sanity-check a contact before sending.
 
-## 4. Outlook SMTP (send mail as you)
+## 4. Resend (send mail)
 
-This is what lets the app send an email through your real Outlook account
-— and only after you click "Approve & Send" on a specific draft. Nothing
-sends automatically.
+This is what lets the app actually send an email — only after you click
+"Approve & Send" on a specific draft. Nothing sends automatically.
 
-1. Sign in at https://account.microsoft.com/security with the account you
-   want to send from.
-2. Turn on two-step verification if it isn't already on (required for app
-   passwords) under **Advanced security options**.
-3. Under **Advanced security options** → **App passwords** → **Create a
-   new app password** → copy it (shown only once).
-4. `.env.local`:
+(Earlier versions of this used Outlook SMTP with an app password, but
+Microsoft disables basic SMTP auth account-wide for many mailboxes now
+— "SmtpClientAuthenticationDisabled" — which made that a dead end short
+of the full Microsoft Graph OAuth flow. Resend's API sidesteps that.)
+
+1. resend.com → sign up → create an API key. Free tier, no credit card
+   required.
+2. `.env.local`:
    ```
-   EMAIL_USER=<your outlook.com address>
-   EMAIL_APP_PASSWORD=<paste the app password here>
+   RESEND_API_KEY=<paste here>
+   ```
+3. Without a verified sending domain, mail sends from
+   `onboarding@resend.dev`, not your real address — replies go to
+   `EMAIL_USER` via the reply-to header instead. To send *from* your own
+   domain, verify it in the Resend dashboard (Domains → Add), then set:
+   ```
+   RESEND_FROM_EMAIL=You <you@yourdomain.com>
    ```
 
 ## Running it
