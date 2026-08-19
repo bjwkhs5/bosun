@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
-import { runCompletion, extractJson } from "@/lib/gemini";
+import { runCompletion, extractJson } from "@/lib/cerebras";
 
 interface Draft {
   subject: string;

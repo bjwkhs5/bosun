@@ -16,18 +16,18 @@ clear error pointing at whichever one is missing.
    SUPABASE_SERVICE_ROLE_KEY=<paste here>
    ```
 
-## 2. Google Gemini (email drafting + extracting contacts from search results)
+## 2. Cerebras (email drafting + extracting contacts from search results)
 
-1. aistudio.google.com/apikey → Create API key.
+1. cloud.cerebras.ai → sign up (email works, no GitHub OAuth needed) →
+   create an API key. Genuine free tier, no credit card required.
 2. `.env.local`:
    ```
-   GEMINI_API_KEY=<paste here>
+   CEREBRAS_API_KEY=<paste here>
    ```
 
-Note: Gemini's own Google Search grounding tool (an earlier version of
-this used it directly for discovery) requires prepaid billing credits —
-it's not actually free. Plain Gemini calls (drafting, and extracting
-structured contacts from search results below) stay on the free tier.
+(Earlier versions of this used OpenAI, then Gemini, then Groq — all hit
+either billing walls or account-access issues. Cerebras's free tier has
+no such gotchas for plain chat completions.)
 
 ## 3. Tavily (web search for contact discovery)
 
@@ -38,7 +38,7 @@ structured contacts from search results below) stay on the free tier.
    TAVILY_API_KEY=<paste here>
    ```
 
-Discovery runs a Tavily search, then has Gemini extract structured
+Discovery runs a Tavily search, then has Cerebras extract structured
 contacts from the results — agency submission pages, brand
 partnerships/press inboxes, named literary agents. It generally won't
 find a specific individual marketing manager's private email if that
