@@ -16,18 +16,18 @@ clear error pointing at whichever one is missing.
    SUPABASE_SERVICE_ROLE_KEY=<paste here>
    ```
 
-## 2. Groq (email drafting + extracting contacts from search results)
+## 2. Cerebras (email drafting + extracting contacts from search results)
 
-1. console.groq.com/keys → Create API key. Genuine free tier, no credit
-   card required.
+1. cloud.cerebras.ai → sign up (email works, no GitHub OAuth needed) →
+   create an API key. Genuine free tier, no credit card required.
 2. `.env.local`:
    ```
-   GROQ_API_KEY=<paste here>
+   CEREBRAS_API_KEY=<paste here>
    ```
 
-(Earlier versions of this used OpenAI, then Google Gemini, for this —
-both ran into billing walls. Groq's free tier has no such gotchas for
-plain chat completions.)
+(Earlier versions of this used OpenAI, then Gemini, then Groq — all hit
+either billing walls or account-access issues. Cerebras's free tier has
+no such gotchas for plain chat completions.)
 
 ## 3. Tavily (web search for contact discovery)
 
@@ -38,7 +38,7 @@ plain chat completions.)
    TAVILY_API_KEY=<paste here>
    ```
 
-Discovery runs a Tavily search, then has Groq extract structured
+Discovery runs a Tavily search, then has Cerebras extract structured
 contacts from the results — agency submission pages, brand
 partnerships/press inboxes, named literary agents. It generally won't
 find a specific individual marketing manager's private email if that

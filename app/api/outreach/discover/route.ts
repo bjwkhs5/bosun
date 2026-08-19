@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin, type ContactCategory } from "@/lib/supabase";
-import { runCompletion, extractJson } from "@/lib/groq";
+import { runCompletion, extractJson } from "@/lib/cerebras";
 import { tavilySearch } from "@/lib/tavily";
 
 interface Candidate {
