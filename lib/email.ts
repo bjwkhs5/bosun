@@ -1,20 +1,10 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-export function getEmailTransport() {
-  const user = process.env.EMAIL_USER;
-  const pass = process.env.EMAIL_APP_PASSWORD;
-  if (!user || !pass) {
-    throw new Error(
-      "Email isn't configured — set EMAIL_USER and EMAIL_APP_PASSWORD in .env.local"
-    );
+export function getResend() {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("Missing RESEND_API_KEY in .env.local");
   }
-  return nodemailer.createTransport({
-    host: "smtp-mail.outlook.com",
-    port: 587,
-    secure: false,
-    requireTLS: true,
-    auth: { user, pass },
-  });
+  return new Resend(process.env.RESEND_API_KEY);
 }
 
 export async function sendOutreachEmail(opts: {
@@ -22,11 +12,19 @@ export async function sendOutreachEmail(opts: {
   subject: string;
   text: string;
 }) {
-  const transport = getEmailTransport();
-  await transport.sendMail({
-    from: process.env.EMAIL_USER,
+  const resend = getResend();
+  const from = process.env.RESEND_FROM_EMAIL || "Bosun <onboarding@resend.dev>";
+  const replyTo = process.env.EMAIL_USER;
+
+  const { error } = await resend.emails.send({
+    from,
     to: opts.to,
     subject: opts.subject,
     text: opts.text,
+    ...(replyTo ? { replyTo } : {}),
   });
+
+  if (error) {
+    throw new Error(error.message);
+  }
 }
