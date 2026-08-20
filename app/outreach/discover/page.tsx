@@ -25,6 +25,7 @@ export default function DiscoverPage() {
     inserted: FoundContact[];
     skipped: number;
     candidatesFound: number;
+    error?: string;
   } | null>(null);
 
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -129,13 +130,14 @@ export default function DiscoverPage() {
         <textarea
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          rows={3}
+          rows={4}
           placeholder={
-            category === "brand_marketing"
+            (category === "brand_marketing"
               ? "e.g. golf apparel brands that run creator/ambassador partnerships with new golfers"
               : category === "literary_agent"
               ? "e.g. agents who represent memoirs about race, career, and identity"
-              : "e.g. arts council grants for debut authors, or companies that sponsor golf memoirs"
+              : "e.g. arts council grants for debut authors, or companies that sponsor golf memoirs") +
+            "\n\nOne search per line to run several at once."
           }
           className="rounded-md border border-black/15 bg-transparent p-2.5 text-sm outline-none focus:border-foreground/50 dark:border-white/15"
         />
@@ -160,6 +162,11 @@ export default function DiscoverPage() {
             Found {result.candidatesFound}, added {result.inserted.length} new,
             skipped {result.skipped} already-known.
           </p>
+          {result.error && (
+            <p className="mb-3 rounded-md border border-orange-500/30 bg-orange-500/10 p-2 text-orange-700 dark:text-orange-300">
+              Some searches in this batch failed: {result.error}
+            </p>
+          )}
           {result.inserted.length > 0 && (
             <>
               <ul className="flex flex-col gap-2">
