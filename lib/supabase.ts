@@ -63,3 +63,11 @@ export interface OutreachEmail {
   created_at: string;
   sent_at: string | null;
 }
+
+export interface SavedSearch {
+  id: string;
+  category: ContactCategory;
+  query: string;
+  last_run_at: string | null;
+  created_at: string;
+}

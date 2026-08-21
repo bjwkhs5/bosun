@@ -55,6 +55,15 @@ create table if not exists outreach_emails (
   sent_at timestamptz
 );
 
+create table if not exists saved_searches (
+  id uuid primary key default gen_random_uuid(),
+  category text not null check (category in ('brand_marketing', 'literary_agent', 'grants_partnerships')),
+  query text not null,
+  last_run_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
 alter table profile enable row level security;
 alter table contacts enable row level security;
 alter table outreach_emails enable row level security;
+alter table saved_searches enable row level security;
