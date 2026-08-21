@@ -74,45 +74,50 @@ export default function ReviewQueue({ items }: { items: ReviewItem[] }) {
 
   if (pending.length === 0) {
     return (
-      <p className="text-sm text-foreground/70">
-        No drafts waiting to be reviewed. Generate some from the{" "}
-        <Link href="/outreach" className="underline">
-          Dashboard
-        </Link>{" "}
-        or{" "}
-        <Link href="/outreach/discover" className="underline">
-          Discover
-        </Link>
-        .
-      </p>
+      <div className="rounded-xl border border-dashed border-card-border p-8 text-center">
+        <p className="text-sm text-muted">
+          No drafts waiting to be reviewed. Generate some from the{" "}
+          <Link href="/outreach" className="text-accent underline underline-offset-2">
+            Dashboard
+          </Link>{" "}
+          or{" "}
+          <Link href="/outreach/discover" className="text-accent underline underline-offset-2">
+            Discover
+          </Link>
+          .
+        </p>
+      </div>
     );
   }
 
   return (
-    <div className="flex flex-col divide-y divide-black/10 dark:divide-white/10">
+    <div className="flex flex-col gap-3">
       {pending.map((item) => {
         const edit = getEdit(item);
         const isExpanded = expanded.has(item.contact.id);
         const itemBusy = busy[item.contact.id];
         const error = errors[item.contact.id];
         return (
-          <div key={item.contact.id} className="flex flex-col gap-3 py-4">
-            <div className="flex items-center justify-between gap-4">
+          <div
+            key={item.contact.id}
+            className="flex flex-col gap-3 rounded-lg border border-card-border bg-card p-4 shadow-sm"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="min-w-0">
                 <Link
                   href={`/outreach/${item.contact.id}`}
-                  className="font-medium hover:underline"
+                  className="font-medium hover:text-accent"
                 >
                   {item.contact.name || item.contact.organization}
                 </Link>
-                <p className="truncate text-sm text-foreground/70">
+                <p className="truncate text-sm text-muted">
                   {item.contact.organization} — {edit.subject}
                 </p>
               </div>
               <div className="flex shrink-0 gap-2">
                 <button
                   onClick={() => toggleExpand(item.contact.id)}
-                  className="rounded-md border border-black/15 px-3 py-1.5 text-sm hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/5"
+                  className="rounded-md border border-card-border px-3 py-1.5 text-sm hover:bg-accent-soft"
                 >
                   {isExpanded ? "Collapse" : "Inspect"}
                 </button>
@@ -124,7 +129,7 @@ export default function ReviewQueue({ items }: { items: ReviewItem[] }) {
                       ? "No email address on file for this contact"
                       : undefined
                   }
-                  className="rounded-md bg-foreground px-3 py-1.5 text-sm font-medium text-background hover:opacity-90 disabled:opacity-50"
+                  className="rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-foreground hover:opacity-90 disabled:opacity-50"
                 >
                   {itemBusy === "send" ? "Sending…" : "Send"}
                 </button>
@@ -138,13 +143,13 @@ export default function ReviewQueue({ items }: { items: ReviewItem[] }) {
             )}
 
             {isExpanded && (
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-3 border-t border-card-border pt-3">
                 <label className="flex flex-col gap-1.5 text-sm">
                   <span className="font-medium">Subject</span>
                   <input
                     value={edit.subject}
                     onChange={(e) => updateEdit(item.contact.id, "subject", e.target.value)}
-                    className="rounded-md border border-black/15 bg-transparent p-2.5 outline-none focus:border-foreground/50 dark:border-white/15"
+                    className="rounded-md border border-card-border bg-transparent p-2.5 outline-none focus:border-accent"
                   />
                 </label>
                 <label className="flex flex-col gap-1.5 text-sm">
@@ -153,7 +158,7 @@ export default function ReviewQueue({ items }: { items: ReviewItem[] }) {
                     value={edit.body}
                     onChange={(e) => updateEdit(item.contact.id, "body", e.target.value)}
                     rows={10}
-                    className="rounded-md border border-black/15 bg-transparent p-2.5 font-mono text-sm outline-none focus:border-foreground/50 dark:border-white/15"
+                    className="rounded-md border border-card-border bg-transparent p-2.5 font-mono text-sm outline-none focus:border-accent"
                   />
                 </label>
               </div>

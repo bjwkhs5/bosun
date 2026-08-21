@@ -32,7 +32,7 @@ export default async function ProfilePage() {
 
   return (
     <div>
-      <p className="mb-6 text-sm text-foreground/70">
+      <p className="mb-6 text-sm text-muted">
         This is what every drafted email is built from — your bio, book, and
         what you&apos;re asking for. Keep it current.
       </p>
@@ -73,7 +73,7 @@ export default async function ProfilePage() {
         />
         <button
           type="submit"
-          className="self-start rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background hover:opacity-90"
+          className="self-start rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:opacity-90"
         >
           Save profile
         </button>
@@ -103,7 +103,7 @@ function Field({
         defaultValue={defaultValue ?? ""}
         placeholder={placeholder}
         rows={rows ?? 2}
-        className="rounded-md border border-black/15 bg-transparent p-2.5 outline-none focus:border-foreground/50 dark:border-white/15"
+        className="rounded-md border border-card-border bg-transparent p-2.5 outline-none focus:border-accent"
       />
     </label>
   );

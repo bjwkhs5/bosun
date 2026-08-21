@@ -47,7 +47,7 @@ export default function AddContactPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <p className="text-sm text-foreground/70">
+      <p className="text-sm text-muted">
         Already know who you want to reach? Add them directly instead of
         waiting on Discover.
       </p>
@@ -86,7 +86,7 @@ export default function AddContactPage() {
             value={organization}
             onChange={(e) => setOrganization(e.target.value)}
             required
-            className="rounded-md border border-black/15 bg-transparent p-2.5 outline-none focus:border-foreground/50 dark:border-white/15"
+            className="rounded-md border border-card-border bg-transparent p-2.5 outline-none focus:border-accent"
           />
         </label>
         <label className="flex flex-col gap-1.5 text-sm">
@@ -95,7 +95,7 @@ export default function AddContactPage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Leave blank if unknown"
-            className="rounded-md border border-black/15 bg-transparent p-2.5 outline-none focus:border-foreground/50 dark:border-white/15"
+            className="rounded-md border border-card-border bg-transparent p-2.5 outline-none focus:border-accent"
           />
         </label>
         <label className="flex flex-col gap-1.5 text-sm">
@@ -103,7 +103,7 @@ export default function AddContactPage() {
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="rounded-md border border-black/15 bg-transparent p-2.5 outline-none focus:border-foreground/50 dark:border-white/15"
+            className="rounded-md border border-card-border bg-transparent p-2.5 outline-none focus:border-accent"
           />
         </label>
         <label className="flex flex-col gap-1.5 text-sm">
@@ -113,7 +113,7 @@ export default function AddContactPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Leave blank if you don't have one yet"
-            className="rounded-md border border-black/15 bg-transparent p-2.5 outline-none focus:border-foreground/50 dark:border-white/15"
+            className="rounded-md border border-card-border bg-transparent p-2.5 outline-none focus:border-accent"
           />
         </label>
         <label className="flex flex-col gap-1.5 text-sm">
@@ -122,7 +122,7 @@ export default function AddContactPage() {
             value={sourceUrl}
             onChange={(e) => setSourceUrl(e.target.value)}
             placeholder="Where you found them (optional)"
-            className="rounded-md border border-black/15 bg-transparent p-2.5 outline-none focus:border-foreground/50 dark:border-white/15"
+            className="rounded-md border border-card-border bg-transparent p-2.5 outline-none focus:border-accent"
           />
         </label>
         <label className="flex flex-col gap-1.5 text-sm">
@@ -132,7 +132,7 @@ export default function AddContactPage() {
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
             placeholder="Anything the draft should know about them"
-            className="rounded-md border border-black/15 bg-transparent p-2.5 outline-none focus:border-foreground/50 dark:border-white/15"
+            className="rounded-md border border-card-border bg-transparent p-2.5 outline-none focus:border-accent"
           />
         </label>
 
@@ -145,7 +145,7 @@ export default function AddContactPage() {
         <button
           type="submit"
           disabled={busy || !organization.trim()}
-          className="self-start rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background hover:opacity-90 disabled:opacity-50"
+          className="self-start rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:opacity-90 disabled:opacity-50"
         >
           {busy ? "Adding…" : "Add contact"}
         </button>

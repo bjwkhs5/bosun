@@ -62,14 +62,14 @@ export default async function OutreachDashboard() {
 
   if (contacts.length === 0) {
     return (
-      <div className="flex flex-col gap-3">
-        <p className="text-sm text-foreground/70">
+      <div className="rounded-xl border border-dashed border-card-border p-8 text-center">
+        <p className="text-sm text-muted">
           No contacts yet. Start by filling in your{" "}
-          <Link href="/outreach/profile" className="underline">
+          <Link href="/outreach/profile" className="text-accent underline underline-offset-2">
             profile
           </Link>
           , then{" "}
-          <Link href="/outreach/discover" className="underline">
+          <Link href="/outreach/discover" className="text-accent underline underline-offset-2">
             discover
           </Link>{" "}
           some contacts.
@@ -87,19 +87,25 @@ export default async function OutreachDashboard() {
     <div className="flex flex-col gap-8">
       {Object.entries(grouped).map(([category, items]) => (
         <section key={category}>
-          <h2 className="mb-3 text-sm font-semibold text-foreground/70">
-            {CATEGORY_LABELS[category as Contact["category"]]} ({items.length})
+          <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-muted">
+            {CATEGORY_LABELS[category as Contact["category"]]}
+            <span className="rounded-full bg-accent-soft px-2 py-0.5 text-xs font-medium text-accent">
+              {items.length}
+            </span>
           </h2>
-          <ul className="flex flex-col divide-y divide-black/10 dark:divide-white/10">
+          <ul className="flex flex-col gap-2.5">
             {items.map((c) => {
               const days = daysSinceSent(c);
               const needsFollowUp = days !== null && days >= FOLLOW_UP_DAYS;
               return (
-                <li key={c.id} className="flex items-center justify-between py-3">
-                  <span className="flex items-center gap-2">
-                    <Link href={`/outreach/${c.id}`} className="hover:underline">
+                <li
+                  key={c.id}
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-card-border bg-card px-4 py-3 shadow-sm transition-shadow hover:shadow-md"
+                >
+                  <span className="flex flex-wrap items-center gap-2.5">
+                    <Link href={`/outreach/${c.id}`} className="hover:text-accent">
                       <span className="font-medium">{c.name || c.organization}</span>
-                      <span className="text-sm text-foreground/70">
+                      <span className="text-sm text-muted">
                         {" "}
                         — {c.title ? `${c.title}, ` : ""}
                         {c.organization}
