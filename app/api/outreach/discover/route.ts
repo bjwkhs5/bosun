@@ -3,6 +3,10 @@ import { getSupabaseAdmin, type ContactCategory } from "@/lib/supabase";
 import { runCompletion, extractJson } from "@/lib/cerebras";
 import { tavilySearch } from "@/lib/tavily";
 
+// Each query line in a mass search runs sequentially (~5-10s each); this
+// gives headroom for several before hitting the platform's function timeout.
+export const maxDuration = 60;
+
 interface RawCandidate {
   name: string;
   title: string;
