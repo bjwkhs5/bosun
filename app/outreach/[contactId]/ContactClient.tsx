@@ -138,7 +138,7 @@ export default function ContactClient({
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold">{contact.name || contact.organization}</h2>
-          <p className="text-sm text-foreground/70">
+          <p className="text-sm text-muted">
             {contact.title ? `${contact.title}, ` : ""}
             {contact.organization} ·{" "}
             {contact.email ?? "no email on file"}
@@ -158,13 +158,13 @@ export default function ContactClient({
             href={contact.source_url}
             target="_blank"
             rel="noreferrer"
-            className="text-sm text-foreground/60 hover:underline"
+            className="text-sm text-muted hover:underline"
           >
             source
           </a>
         )}
         {contact.notes && (
-          <p className="mt-2 text-sm text-foreground/70">{contact.notes}</p>
+          <p className="mt-2 text-sm text-muted">{contact.notes}</p>
         )}
       </div>
 
@@ -178,7 +178,7 @@ export default function ContactClient({
         <button
           onClick={generateDraft}
           disabled={busy !== null}
-          className="self-start rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background hover:opacity-90 disabled:opacity-50"
+          className="self-start rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:opacity-90 disabled:opacity-50"
         >
           {busy === "draft" ? "Drafting…" : "Generate draft"}
         </button>
@@ -190,7 +190,7 @@ export default function ContactClient({
               value={subject}
               disabled={isSent}
               onChange={(e) => setSubject(e.target.value)}
-              className="rounded-md border border-black/15 bg-transparent p-2.5 outline-none focus:border-foreground/50 disabled:opacity-60 dark:border-white/15"
+              className="rounded-md border border-card-border bg-transparent p-2.5 outline-none focus:border-accent disabled:opacity-60"
             />
           </label>
           <label className="flex flex-col gap-1.5 text-sm">
@@ -200,7 +200,7 @@ export default function ContactClient({
               disabled={isSent}
               onChange={(e) => setEmailBody(e.target.value)}
               rows={12}
-              className="rounded-md border border-black/15 bg-transparent p-2.5 font-mono text-sm outline-none focus:border-foreground/50 disabled:opacity-60 dark:border-white/15"
+              className="rounded-md border border-card-border bg-transparent p-2.5 font-mono text-sm outline-none focus:border-accent disabled:opacity-60"
             />
           </label>
 
@@ -221,20 +221,20 @@ export default function ContactClient({
                     onChange={(e) => setReplyNotes(e.target.value)}
                     placeholder="Notes about their reply…"
                     rows={3}
-                    className="rounded-md border border-black/15 bg-transparent p-2 text-sm outline-none focus:border-foreground/50 dark:border-white/15"
+                    className="rounded-md border border-card-border bg-transparent p-2 text-sm outline-none focus:border-accent"
                   />
                   <div className="flex gap-3">
                     <button
                       onClick={() => setReplied(true)}
                       disabled={busy !== null}
-                      className="self-start rounded-md border border-black/15 px-3 py-1.5 text-sm hover:bg-black/5 disabled:opacity-50 dark:border-white/15 dark:hover:bg-white/5"
+                      className="self-start rounded-md border border-card-border px-3 py-1.5 text-sm hover:bg-accent-soft disabled:opacity-50"
                     >
                       {busy === "reply" ? "Saving…" : "Save notes"}
                     </button>
                     <button
                       onClick={() => setReplied(false)}
                       disabled={busy !== null}
-                      className="self-start rounded-md border border-black/15 px-3 py-1.5 text-sm hover:bg-black/5 disabled:opacity-50 dark:border-white/15 dark:hover:bg-white/5"
+                      className="self-start rounded-md border border-card-border px-3 py-1.5 text-sm hover:bg-accent-soft disabled:opacity-50"
                     >
                       Unmark reply
                     </button>
@@ -247,12 +247,12 @@ export default function ContactClient({
                     onChange={(e) => setReplyNotes(e.target.value)}
                     placeholder="Notes about their reply (optional)…"
                     rows={2}
-                    className="rounded-md border border-black/15 bg-transparent p-2 text-sm outline-none focus:border-foreground/50 dark:border-white/15"
+                    className="rounded-md border border-card-border bg-transparent p-2 text-sm outline-none focus:border-accent"
                   />
                   <button
                     onClick={() => setReplied(true)}
                     disabled={busy !== null}
-                    className="self-start rounded-md border border-black/15 px-3 py-1.5 text-sm hover:bg-black/5 disabled:opacity-50 dark:border-white/15 dark:hover:bg-white/5"
+                    className="self-start rounded-md border border-card-border px-3 py-1.5 text-sm hover:bg-accent-soft disabled:opacity-50"
                   >
                     {busy === "reply" ? "Saving…" : "Mark as replied"}
                   </button>
@@ -264,14 +264,14 @@ export default function ContactClient({
               <button
                 onClick={saveEdits}
                 disabled={busy !== null}
-                className="rounded-md border border-black/15 px-4 py-2 text-sm hover:bg-black/5 disabled:opacity-50 dark:border-white/15 dark:hover:bg-white/5"
+                className="rounded-md border border-card-border px-4 py-2 text-sm hover:bg-accent-soft disabled:opacity-50"
               >
                 {busy === "save" ? "Saving…" : "Save edits"}
               </button>
               <button
                 onClick={generateDraft}
                 disabled={busy !== null}
-                className="rounded-md border border-black/15 px-4 py-2 text-sm hover:bg-black/5 disabled:opacity-50 dark:border-white/15 dark:hover:bg-white/5"
+                className="rounded-md border border-card-border px-4 py-2 text-sm hover:bg-accent-soft disabled:opacity-50"
               >
                 {busy === "draft" ? "Regenerating…" : "Regenerate"}
               </button>
@@ -283,7 +283,7 @@ export default function ContactClient({
                     ? "No email address on file for this contact"
                     : undefined
                 }
-                className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background hover:opacity-90 disabled:opacity-50"
+                className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:opacity-90 disabled:opacity-50"
               >
                 {busy === "send" ? "Sending…" : "Approve & Send"}
               </button>

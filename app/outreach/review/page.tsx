@@ -48,7 +48,7 @@ export default async function ReviewPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-sm text-foreground/70">
+      <p className="text-sm text-muted">
         Every drafted email waiting to be sent. Send as-is, or Inspect to edit
         first.
       </p>

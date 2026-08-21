@@ -140,7 +140,7 @@ export default function DiscoverPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <p className="text-sm text-foreground/70">
+      <p className="text-sm text-muted">
         Describe who you&apos;re looking for. This searches the public web —
         it finds published contacts (agency submission pages, brand
         partnerships/press inboxes), not private inboxes. Review everything
@@ -186,13 +186,13 @@ export default function DiscoverPage() {
               : "e.g. arts council grants for debut authors, or companies that sponsor golf memoirs") +
             "\n\nOne search per line to run several at once."
           }
-          className="rounded-md border border-black/15 bg-transparent p-2.5 text-sm outline-none focus:border-foreground/50 dark:border-white/15"
+          className="rounded-md border border-card-border bg-transparent p-2.5 text-sm outline-none focus:border-accent"
         />
         <div className="flex items-center gap-3">
           <button
             type="submit"
             disabled={loading || !query.trim()}
-            className="self-start rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background hover:opacity-90 disabled:opacity-50"
+            className="self-start rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:opacity-90 disabled:opacity-50"
           >
             {loading ? "Searching…" : "Search"}
           </button>
@@ -200,7 +200,7 @@ export default function DiscoverPage() {
             type="button"
             onClick={saveStandingSearch}
             disabled={savingSearch || !query.trim()}
-            className="self-start rounded-md border border-black/15 px-4 py-2 text-sm hover:bg-black/5 disabled:opacity-50 dark:border-white/15 dark:hover:bg-white/5"
+            className="self-start rounded-md border border-card-border px-4 py-2 text-sm hover:bg-accent-soft disabled:opacity-50"
           >
             {savingSearch ? "Saving…" : "Save as standing search"}
           </button>
@@ -211,17 +211,17 @@ export default function DiscoverPage() {
       </form>
 
       {savedSearches.length > 0 && (
-        <div className="rounded-md border border-black/10 p-4 text-sm dark:border-white/10">
-          <p className="mb-3 text-foreground/70">
+        <div className="rounded-lg border border-card-border bg-card p-4 text-sm shadow-sm">
+          <p className="mb-3 text-muted">
             Standing searches — these run automatically once a day and add
             whatever they find straight to your Dashboard.
           </p>
-          <ul className="flex flex-col divide-y divide-black/10 dark:divide-white/10">
+          <ul className="flex flex-col divide-y divide-card-border">
             {savedSearches.map((s) => (
               <li key={s.id} className="flex items-center justify-between gap-4 py-2">
                 <div>
                   <p className="font-medium">{s.query}</p>
-                  <p className="text-foreground/70">
+                  <p className="text-muted">
                     {CATEGORY_LABELS[s.category]}
                     {s.last_run_at
                       ? ` · last ran ${new Date(s.last_run_at).toLocaleDateString()}`
@@ -247,8 +247,8 @@ export default function DiscoverPage() {
       )}
 
       {result && (
-        <div className="rounded-md border border-black/10 p-4 text-sm dark:border-white/10">
-          <p className="mb-3 text-foreground/70">
+        <div className="rounded-lg border border-card-border bg-card p-4 text-sm shadow-sm">
+          <p className="mb-3 text-muted">
             Found {result.candidatesFound}, added {result.inserted.length} new,
             skipped {result.skipped} already-known.
           </p>
@@ -274,7 +274,7 @@ export default function DiscoverPage() {
                     >
                       {c.name || c.organization}
                     </Link>
-                    <span className="text-foreground/70">
+                    <span className="text-muted">
                       — {c.title ? `${c.title}, ` : ""}
                       {c.organization}
                       {c.email ? ` · ${c.email}` : " · no email found"}
@@ -291,7 +291,7 @@ export default function DiscoverPage() {
               <button
                 onClick={generateSelectedDrafts}
                 disabled={bulkBusy || selected.size === 0}
-                className="mt-4 self-start rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background hover:opacity-90 disabled:opacity-50"
+                className="mt-4 self-start rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:opacity-90 disabled:opacity-50"
               >
                 {bulkBusy
                   ? `Drafting ${bulkProgress?.done ?? 0}/${bulkProgress?.total ?? 0}…`

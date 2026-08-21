@@ -32,7 +32,7 @@ export default function DraftButton({ contactId }: { contactId: string }) {
       <button
         onClick={handleClick}
         disabled={busy}
-        className="rounded-md border border-black/15 px-2 py-0.5 text-xs hover:bg-black/5 disabled:opacity-50 dark:border-white/15 dark:hover:bg-white/5"
+        className="rounded-md border border-card-border px-2 py-0.5 text-xs hover:bg-accent-soft disabled:opacity-50"
       >
         {busy ? "Drafting…" : "Draft"}
       </button>
