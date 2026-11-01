@@ -1,4 +1,5 @@
-import { getSupabaseAdmin, type Profile } from "@/lib/supabase";
+import { type Profile } from "@/lib/supabase";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { saveProfile } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -8,12 +9,9 @@ export default async function ProfilePage() {
   let loadError: string | null = null;
 
   try {
-    const supabase = getSupabaseAdmin();
-    const { data, error } = await supabase
-      .from("profile")
-      .select("*")
-      .eq("id", 1)
-      .single();
+    const supabase = await createServerSupabaseClient();
+    // No .eq needed — RLS scopes this to exactly the caller's own row.
+    const { data, error } = await supabase.from("profile").select("*").single();
     if (error) throw new Error(error.message);
     profile = data;
   } catch (err) {
@@ -70,6 +68,13 @@ export default async function ProfilePage() {
           defaultValue={profile?.ask}
           placeholder="e.g. paid content partnership, gear sponsorship, agent representation for the book..."
           rows={3}
+        />
+        <Field
+          label="Reply-to email (optional)"
+          name="reply_to_email"
+          defaultValue={profile?.reply_to_email ?? undefined}
+          placeholder="Replies to your outreach go here instead of the sending address"
+          rows={1}
         />
         <button
           type="submit"

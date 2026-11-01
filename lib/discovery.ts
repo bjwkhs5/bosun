@@ -91,18 +91,24 @@ export interface DiscoveryBatchResult {
 /**
  * Runs one or more search queries against the given category, dedupes
  * against existing contacts (and within the batch itself), and inserts
- * whatever's new. Shared by the interactive Discover form and the
- * scheduled cron job so both stay in sync.
+ * whatever's new. Shared by the interactive Discover form (RLS-scoped
+ * client, one user) and the scheduled cron job (admin client, looped once
+ * per user) — `userId` is required either way and every query here is
+ * explicitly scoped by it. That's not redundant with RLS: the cron job's
+ * admin client bypasses RLS entirely, so this scoping is the only thing
+ * prevented one tenant's search from reading or colliding with another's.
  */
 export async function runDiscoveryBatch(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabase: SupabaseClient<any, any, any>,
   category: ContactCategory,
-  queries: string[]
+  queries: string[],
+  userId: string
 ): Promise<DiscoveryBatchResult> {
   const { data: existing, error: fetchError } = await supabase
     .from("contacts")
-    .select("email, organization, name");
+    .select("email, organization, name")
+    .eq("user_id", userId);
 
   if (fetchError) {
     throw new Error(`Failed to check existing contacts: ${fetchError.message}`);
@@ -157,6 +163,7 @@ export async function runDiscoveryBatch(
     .from("contacts")
     .insert(
       toInsert.map((c) => ({
+        user_id: userId,
         name: c.name || "",
         title: c.title || "",
         organization: c.organization,

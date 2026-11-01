@@ -3,9 +3,17 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import type { MediaAsset } from "@/lib/supabase";
+import AttachmentPicker from "../AttachmentPicker";
 import type { ReviewItem } from "./page";
 
-export default function ReviewQueue({ items }: { items: ReviewItem[] }) {
+export default function ReviewQueue({
+  items,
+  mediaAssets,
+}: {
+  items: ReviewItem[];
+  mediaAssets: MediaAsset[];
+}) {
   const router = useRouter();
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [edits, setEdits] = useState<Record<string, { subject: string; body: string }>>(
@@ -161,6 +169,10 @@ export default function ReviewQueue({ items }: { items: ReviewItem[] }) {
                     className="rounded-md border border-card-border bg-transparent p-2.5 font-mono text-sm outline-none focus:border-accent"
                   />
                 </label>
+                <div className="flex flex-col gap-1.5 text-sm">
+                  <span className="font-medium">Attachments</span>
+                  <AttachmentPicker emailId={item.email.id} mediaAssets={mediaAssets} />
+                </div>
               </div>
             )}
           </div>

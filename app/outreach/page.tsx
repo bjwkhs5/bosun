@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getSupabaseAdmin, type Contact } from "@/lib/supabase";
+import { type Contact } from "@/lib/supabase";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import DraftButton from "./DraftButton";
 
 export const dynamic = "force-dynamic";
@@ -40,7 +41,7 @@ export default async function OutreachDashboard() {
   let loadError: string | null = null;
 
   try {
-    const supabase = getSupabaseAdmin();
+    const supabase = await createServerSupabaseClient();
     const { data, error } = await supabase
       .from("contacts")
       .select("*, outreach_emails(sent_at, status)")

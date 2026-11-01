@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export async function PATCH(
   req: NextRequest,
@@ -16,14 +16,12 @@ export async function PATCH(
     return NextResponse.json({ error: "Missing replied" }, { status: 400 });
   }
 
-  let supabase;
-  try {
-    supabase = getSupabaseAdmin();
-  } catch (err) {
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : String(err) },
-      { status: 500 }
-    );
+  const supabase = await createServerSupabaseClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: "Not signed in" }, { status: 401 });
   }
 
   const { data, error } = await supabase
@@ -56,14 +54,12 @@ export async function DELETE(
 ) {
   const { contactId } = await params;
 
-  let supabase;
-  try {
-    supabase = getSupabaseAdmin();
-  } catch (err) {
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : String(err) },
-      { status: 500 }
-    );
+  const supabase = await createServerSupabaseClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: "Not signed in" }, { status: 401 });
   }
 
   const { error } = await supabase.from("contacts").delete().eq("id", contactId);

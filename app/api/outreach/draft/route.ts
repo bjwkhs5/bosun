@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { runCompletion, extractJson } from "@/lib/cerebras";
 
 interface Draft {
@@ -47,20 +47,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Missing contactId" }, { status: 400 });
   }
 
-  let supabase;
-  try {
-    supabase = getSupabaseAdmin();
-  } catch (err) {
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : String(err) },
-      { status: 500 }
-    );
+  const supabase = await createServerSupabaseClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: "Not signed in" }, { status: 401 });
   }
 
   const [{ data: contact, error: contactError }, { data: profile, error: profileError }] =
     await Promise.all([
       supabase.from("contacts").select("*").eq("id", contactId).single(),
-      supabase.from("profile").select("*").eq("id", 1).single(),
+      // No .eq needed — RLS already scopes this to exactly the caller's
+      // own profile row.
+      supabase.from("profile").select("*").single(),
     ]);
 
   if (contactError || !contact) {

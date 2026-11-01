@@ -2,14 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Contact, OutreachEmail } from "@/lib/supabase";
+import type { Contact, MediaAsset, OutreachEmail } from "@/lib/supabase";
+import AttachmentPicker from "../AttachmentPicker";
 
 export default function ContactClient({
   contact,
   latestEmail,
+  mediaAssets,
 }: {
   contact: Contact;
   latestEmail: OutreachEmail | null;
+  mediaAssets: MediaAsset[];
 }) {
   const router = useRouter();
 
@@ -203,6 +206,15 @@ export default function ContactClient({
               className="rounded-md border border-card-border bg-transparent p-2.5 font-mono text-sm outline-none focus:border-accent disabled:opacity-60"
             />
           </label>
+
+          <div className="flex flex-col gap-1.5 text-sm">
+            <span className="font-medium">Attachments</span>
+            <AttachmentPicker
+              emailId={email.id}
+              mediaAssets={mediaAssets}
+              disabled={isSent}
+            />
+          </div>
 
           {isSent ? (
             <div className="flex flex-col gap-3">

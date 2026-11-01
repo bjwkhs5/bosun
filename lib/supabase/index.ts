@@ -28,17 +28,19 @@ export type ContactStatus =
 export type EmailStatus = "draft" | "approved" | "sent" | "failed";
 
 export interface Profile {
-  id: number;
+  user_id: string;
   bio: string;
   book_title: string;
   book_details: string;
   links: string;
   ask: string;
+  reply_to_email: string | null;
   updated_at: string;
 }
 
 export interface Contact {
   id: string;
+  user_id: string;
   name: string;
   title: string;
   organization: string;
@@ -64,8 +66,19 @@ export interface OutreachEmail {
   sent_at: string | null;
 }
 
+export interface MediaAsset {
+  id: string;
+  user_id: string;
+  file_name: string;
+  storage_path: string;
+  content_type: string;
+  size_bytes: number;
+  created_at: string;
+}
+
 export interface SavedSearch {
   id: string;
+  user_id: string;
   category: ContactCategory;
   query: string;
   last_run_at: string | null;
