@@ -15,7 +15,7 @@ const STATUS_STYLES: Record<Contact["status"], string> = {
 };
 
 const CATEGORY_LABELS: Record<Contact["category"], string> = {
-  brand_marketing: "Brand marketing / partnerships",
+  brand_marketing: "Brand sponsorships",
   literary_agent: "Literary agents",
   grants_partnerships: "Grants & partnerships",
 };
@@ -63,18 +63,41 @@ export default async function OutreachDashboard() {
 
   if (contacts.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-card-border p-8 text-center">
-        <p className="text-sm text-muted">
-          No contacts yet. Start by filling in your{" "}
-          <Link href="/outreach/profile" className="text-accent underline underline-offset-2">
-            profile
-          </Link>
-          , then{" "}
-          <Link href="/outreach/discover" className="text-accent underline underline-offset-2">
-            discover
-          </Link>{" "}
-          some contacts.
-        </p>
+      <div className="rounded-xl border border-dashed border-card-border p-8">
+        <h2 className="text-lg font-semibold tracking-tight">
+          Welcome aboard. Let&apos;s land your first brand deal.
+        </h2>
+        <ol className="mt-4 flex flex-col gap-3 text-sm">
+          <li>
+            <span className="font-medium">1. Fill in your </span>
+            <Link href="/outreach/profile" className="text-accent underline underline-offset-2">
+              profile
+            </Link>
+            <span className="text-muted">
+              {" "}
+              with what you create, your audience numbers, and the kind of
+              partnership you want.
+            </span>
+          </li>
+          <li>
+            <span className="font-medium">2. Upload your media kit</span>
+            <span className="text-muted"> in </span>
+            <Link href="/outreach/media" className="text-accent underline underline-offset-2">
+              Media
+            </Link>
+            <span className="text-muted"> so you can attach it to pitches.</span>
+          </li>
+          <li>
+            <span className="font-medium">3. </span>
+            <Link href="/outreach/discover" className="text-accent underline underline-offset-2">
+              Discover
+            </Link>
+            <span className="text-muted">
+              {" "}
+              brands in your niche, then draft and send pitches from Review.
+            </span>
+          </li>
+        </ol>
       </div>
     );
   }

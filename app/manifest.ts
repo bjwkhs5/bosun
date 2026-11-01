@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Bosun — Outreach Assistant",
+    name: "Bosun: Brand Deals for Creators",
     short_name: "Bosun",
-    description: "Your outreach first mate — discover contacts, draft, and send.",
+    description: "Find brands that sponsor creators, send pitches that sound like you.",
     start_url: "/outreach",
     display: "standalone",
     background_color: "#f8f7f3",

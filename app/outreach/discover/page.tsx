@@ -15,7 +15,7 @@ interface FoundContact {
 }
 
 const CATEGORY_LABELS: Record<SavedSearch["category"], string> = {
-  brand_marketing: "Brand marketing / partnerships",
+  brand_marketing: "Brand sponsorships",
   literary_agent: "Literary agents",
   grants_partnerships: "Grants & partnerships",
 };
@@ -141,10 +141,11 @@ export default function DiscoverPage() {
   return (
     <div className="flex flex-col gap-6">
       <p className="text-sm text-muted">
-        Describe who you&apos;re looking for. This searches the public web —
-        it finds published contacts (agency submission pages, brand
-        partnerships/press inboxes), not private inboxes. Review everything
-        it finds before drafting or sending.
+        Describe the brands you want to work with: your niche, the products
+        your audience buys, or brands you already use. Bosun searches the
+        public web for contacts brands publish themselves, such as
+        partnership, press, and creator-program inboxes, never private
+        inboxes. Review everything it finds before drafting or sending.
       </p>
 
       <form onSubmit={runDiscovery} className="flex flex-col gap-4">
@@ -155,7 +156,7 @@ export default function DiscoverPage() {
               checked={category === "brand_marketing"}
               onChange={() => setCategory("brand_marketing")}
             />
-            Brand marketing / partnerships
+            Brand sponsorships
           </label>
           <label className="flex items-center gap-2">
             <input
@@ -180,10 +181,10 @@ export default function DiscoverPage() {
           rows={4}
           placeholder={
             (category === "brand_marketing"
-              ? "e.g. golf apparel brands that run creator/ambassador partnerships with new golfers"
+              ? "e.g. outdoor gear brands with creator or ambassador programs for hiking YouTubers"
               : category === "literary_agent"
-              ? "e.g. agents who represent memoirs about race, career, and identity"
-              : "e.g. arts council grants for debut authors, or companies that sponsor golf memoirs") +
+              ? "e.g. agents who represent memoirs about career change and identity"
+              : "e.g. creator funds, arts council grants, or companies that sponsor podcasts in your niche") +
             "\n\nOne search per line to run several at once."
           }
           className="rounded-md border border-card-border bg-transparent p-2.5 text-sm outline-none focus:border-accent"

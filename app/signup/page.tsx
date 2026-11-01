@@ -71,6 +71,9 @@ export default function SignupPage() {
           ⚓
         </span>
         <h1 className="mt-3 text-xl font-semibold">Create your Bosun account</h1>
+        <p className="mt-1.5 text-sm text-muted">
+          Start pitching brands that sponsor creators like you.
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">

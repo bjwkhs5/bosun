@@ -70,7 +70,7 @@ export default function AttachmentPicker({
         <Link href="/outreach/media" className="text-accent underline underline-offset-2">
           media library
         </Link>{" "}
-        yet — upload a headshot, book cover, or one-pager there to attach it here.
+        yet — upload your media kit, a headshot, or a rate card there to attach it here.
       </p>
     );
   }

@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Bosun",
-  description: "Your outreach first mate — discover contacts, draft, and send.",
+  description: "Find brands that sponsor creators, send pitches that sound like you.",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

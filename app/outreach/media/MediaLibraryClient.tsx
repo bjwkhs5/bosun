@@ -55,7 +55,7 @@ export default function MediaLibraryClient({ initial }: { initial: MediaAsset[] 
   return (
     <div className="flex flex-col gap-6">
       <p className="text-sm text-muted">
-        Upload files once here — a headshot, book cover, one-pager, media
+        Upload files once here — your media kit, a headshot, rate card, media
         kit — then attach any of them to individual drafts from the contact
         page or Review & Send. JPEG, PNG, WebP, PDF, or Word docs, up to 8MB
         each.
