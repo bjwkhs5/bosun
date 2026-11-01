@@ -1,4 +1,5 @@
-import { getSupabaseAdmin, type Contact, type OutreachEmail } from "@/lib/supabase";
+import { type Contact, type MediaAsset, type OutreachEmail } from "@/lib/supabase";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import ReviewQueue from "./ReviewQueue";
 
 export const dynamic = "force-dynamic";
@@ -10,16 +11,22 @@ export interface ReviewItem {
 
 export default async function ReviewPage() {
   let items: ReviewItem[] = [];
+  let mediaAssets: MediaAsset[] = [];
   let loadError: string | null = null;
 
   try {
-    const supabase = getSupabaseAdmin();
-    const { data, error } = await supabase
-      .from("contacts")
-      .select("*, outreach_emails(*)")
-      .eq("status", "drafted")
-      .order("created_at", { ascending: false });
+    const supabase = await createServerSupabaseClient();
+    const [{ data, error }, { data: mediaData, error: mediaError }] = await Promise.all([
+      supabase
+        .from("contacts")
+        .select("*, outreach_emails(*)")
+        .eq("status", "drafted")
+        .order("created_at", { ascending: false }),
+      supabase.from("media_assets").select("*").order("created_at", { ascending: false }),
+    ]);
     if (error) throw new Error(error.message);
+    if (mediaError) throw new Error(mediaError.message);
+    mediaAssets = mediaData ?? [];
 
     items = ((data ?? []) as (Contact & { outreach_emails: OutreachEmail[] })[])
       .map((c) => {
@@ -29,6 +36,7 @@ export default async function ReviewPage() {
             (a, b) =>
               new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
           );
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { outreach_emails, ...contact } = c;
         return drafts[0] ? { contact, email: drafts[0] } : null;
       })
@@ -52,7 +60,7 @@ export default async function ReviewPage() {
         Every drafted email waiting to be sent. Send as-is, or Inspect to edit
         first.
       </p>
-      <ReviewQueue items={items} />
+      <ReviewQueue items={items} mediaAssets={mediaAssets} />
     </div>
   );
 }

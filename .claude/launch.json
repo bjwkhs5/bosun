@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 3000
+    },
+    {
+      "name": "author-site",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "cd /Users/brandonwilliams/Projects/author-site && npm run dev -- --port 3100"],
+      "port": 3100
     }
   ]
 }

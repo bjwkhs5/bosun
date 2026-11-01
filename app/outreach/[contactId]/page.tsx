@@ -1,4 +1,4 @@
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import ContactClient from "./ContactClient";
 
 export const dynamic = "force-dynamic";
@@ -12,7 +12,7 @@ export default async function ContactPage({
 
   let supabase;
   try {
-    supabase = getSupabaseAdmin();
+    supabase = await createServerSupabaseClient();
   } catch (err) {
     return (
       <p className="rounded-md border border-red-500/30 bg-red-500/10 p-4 text-sm">
@@ -43,5 +43,16 @@ export default async function ContactPage({
     .order("created_at", { ascending: false })
     .limit(1);
 
-  return <ContactClient contact={contact} latestEmail={emails?.[0] ?? null} />;
+  const { data: mediaAssets } = await supabase
+    .from("media_assets")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  return (
+    <ContactClient
+      contact={contact}
+      latestEmail={emails?.[0] ?? null}
+      mediaAssets={mediaAssets ?? []}
+    />
+  );
 }

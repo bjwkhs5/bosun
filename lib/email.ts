@@ -11,10 +11,15 @@ export async function sendOutreachEmail(opts: {
   to: string;
   subject: string;
   text: string;
+  attachments?: { filename: string; content: Buffer }[];
+  replyTo?: string | null;
 }) {
   const resend = getResend();
+  // TODO: RESEND_FROM_EMAIL (the `from` address) is still global across all
+  // users — Resend requires a verified sending domain, so a real per-user
+  // `from` isn't practical yet. Reply-to is per-user (below); from isn't.
   const from = process.env.RESEND_FROM_EMAIL || "Bosun <onboarding@resend.dev>";
-  const replyTo = process.env.EMAIL_USER;
+  const replyTo = opts.replyTo || process.env.EMAIL_USER;
 
   const { error } = await resend.emails.send({
     from,
@@ -22,6 +27,7 @@ export async function sendOutreachEmail(opts: {
     subject: opts.subject,
     text: opts.text,
     ...(replyTo ? { replyTo } : {}),
+    ...(opts.attachments?.length ? { attachments: opts.attachments } : {}),
   });
 
   if (error) {

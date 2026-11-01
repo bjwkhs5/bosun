@@ -33,26 +33,45 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const results = [];
+  // Group by user_id and run each user's searches as their own batch — this
+  // admin-client path bypasses RLS entirely, so pooling searches from
+  // different tenants into one runDiscoveryBatch call would let one
+  // tenant's discovery dedupe against (and thus silently skip) another
+  // tenant's contacts.
+  const searchesByUser = new Map<string, SavedSearch[]>();
   for (const search of (savedSearches ?? []) as SavedSearch[]) {
-    try {
-      const result = await runDiscoveryBatch(supabase, search.category, [search.query]);
-      await supabase
-        .from("saved_searches")
-        .update({ last_run_at: new Date().toISOString() })
-        .eq("id", search.id);
-      results.push({
-        query: search.query,
-        inserted: result.inserted.length,
-        skipped: result.skipped,
-        candidatesFound: result.candidatesFound,
-        errors: result.errors,
-      });
-    } catch (err) {
-      results.push({
-        query: search.query,
-        error: err instanceof Error ? err.message : String(err),
-      });
+    const list = searchesByUser.get(search.user_id) ?? [];
+    list.push(search);
+    searchesByUser.set(search.user_id, list);
+  }
+
+  const results = [];
+  for (const [userId, searches] of searchesByUser) {
+    for (const search of searches) {
+      try {
+        const result = await runDiscoveryBatch(
+          supabase,
+          search.category,
+          [search.query],
+          userId
+        );
+        await supabase
+          .from("saved_searches")
+          .update({ last_run_at: new Date().toISOString() })
+          .eq("id", search.id);
+        results.push({
+          query: search.query,
+          inserted: result.inserted.length,
+          skipped: result.skipped,
+          candidatesFound: result.candidatesFound,
+          errors: result.errors,
+        });
+      } catch (err) {
+        results.push({
+          query: search.query,
+          error: err instanceof Error ? err.message : String(err),
+        });
+      }
     }
   }
 
